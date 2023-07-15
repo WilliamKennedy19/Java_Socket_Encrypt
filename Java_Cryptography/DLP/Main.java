@@ -14,15 +14,8 @@ public class Main {
     SocketClient client = new SocketClient(9876);
     client.connect();
 
-    dlp encrypt = new dlp(2, 13);
     
-    }
-
-   public dlp initiateEncryption(int g, int p) {
-        
-        dlp encrypt = new dlp(g,p);
-        return encrypt;
-
+    
     }
     
 }
