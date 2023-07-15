@@ -10,8 +10,6 @@ public class Main {
     
     public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException, InterruptedException {
 
-    EncryptServer server = new EncryptServer(9876);
-
     SocketClient client = new SocketClient(9876);
     client.connect();
 

@@ -83,7 +83,7 @@ public class SocketClient extends EncryptSocket{
         
         // Receives the server public value and computes the secret key
         int servPubVal = (int) ois.readObject();
-        secretKey = (int) computeKey(servPubVal,a);
+        secretKey = (int) computeServerKey(servPubVal,a);
     }
 
     public String[] encrypt(String m) {

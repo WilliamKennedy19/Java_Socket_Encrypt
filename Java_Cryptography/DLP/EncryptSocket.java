@@ -6,12 +6,12 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.stream.IntStream;
+
 
 public class EncryptSocket implements SocketCS{
 
     // Data communication properties
-    InetAddress host = InetAddress.getLocalHost();
+    protected InetAddress host = InetAddress.getLocalHost();
     Socket socket = null;
     ObjectOutputStream oos = null;
     ObjectInputStream ois = null;
@@ -24,19 +24,21 @@ public class EncryptSocket implements SocketCS{
     public EncryptSocket(int port) throws UnknownHostException, IOException{
         this.port = port;
 
-        try {
-            socket = new Socket(host.getHostName(), port);
-            this.oos = new ObjectOutputStream(socket.getOutputStream());
-        }
+        socket = new Socket(host, port);
 
-        catch (UnknownHostException e) {
-            System.out.println("Unknown host");
-        }
+    }
 
-        catch (IOException e) {
-            System.out.println("Super class IO Exception");
-        }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Methods for encrypted messaging
 
+    public byte encryptMes(String m) {
+        byte plainText = Byte.parseByte(m);
+
+        byte cipherText = (byte) (plainText + secretKey);
+
+        System.out.println(plainText);
+
+        return cipherText;
     }
 
 

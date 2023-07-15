@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.lang.ClassNotFoundException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import DLP.EncryptSocket;
 
@@ -19,36 +20,52 @@ public class EncryptServer extends EncryptSocket{
     
     //static ServerSocket variable
     private ServerSocket server;
+    private static int port;
+    public Socket socket;
+    public ObjectInputStream ois = null;
+    public ObjectOutputStream oos = null;
 
     private int secretKey;
     public static int g = 2;
     public static int p = 13;
     public static int A;
 
-    public int port;
-    public Socket socket;
-    public static ObjectInputStream ois = null;
-    public static ObjectOutputStream oos = null;
 
     public EncryptServer(int port) throws IOException, ClassNotFoundException{
 
         super(port);
 
         this.port = port;
+        
+        try {
+            server = new ServerSocket(port);
+        }
 
-        server = new ServerSocket(port);
+        catch (UnknownHostException e) {
+            System.out.println("Unknown host");
+        }
+
+        catch (IOException e) {
+            System.out.println("Super class IO Exception");
+        }
+
+        socket = server.accept();
+
         this.assignPubParam(g,p);
         int a = (int) Math.round(Math.random()*p);
         A = this.publicValue(a);
-        this.listenForConnections();
+        this.oos = new ObjectOutputStream(socket.getOutputStream());
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException{
-        EncryptServer server = new EncryptServer(9876);
-        
+        EncryptServer eServer = new EncryptServer(port);
+
+        eServer.listenForConnections();
     }
 
     public void listenForConnections() throws IOException, ClassNotFoundException{
+
+        this.oos = new ObjectOutputStream(socket.getOutputStream());
         
         while (true) {
 
