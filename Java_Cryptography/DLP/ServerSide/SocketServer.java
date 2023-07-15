@@ -9,7 +9,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import DLP.EncryptSocket;
-import DLP.SocketCS;
 
 /**
  * This class implements java Socket server
@@ -19,66 +18,36 @@ import DLP.SocketCS;
 public class SocketServer extends EncryptSocket{
     
     //static ServerSocket variable
-    private static ServerSocket server;
-    //socket server port on which it will listen
-    private static int port = 9876;
+    private ServerSocket server;
 
     private int secretKey;
-
     public static int g = 2;
     public static int p = 13;
     public static String A;
 
+    public int port;
+    public Socket socket;
     public static ObjectInputStream ois = null;
     public static ObjectOutputStream oos = null;
 
-    public SocketServer() throws IOException, ClassNotFoundException{
+    public SocketServer(int port) throws IOException, ClassNotFoundException{
+
         super(port);
-        
-    }
-    
-    public static void main(String args[]) throws IOException, ClassNotFoundException{
+
+        this.port = port;
 
         server = new ServerSocket(port);
-        
+        this.socket = server.accept(); 
+        oos = new ObjectOutputStream(socket.getOutputStream());
+    }
 
-        while(true){
-            System.out.println("Waiting for the client request");
-            //creating socket and waiting for client connection
-            Socket socket = server.accept();    
-            //read from socket to ObjectInputStream object
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            //convert ObjectInputStream object to String
-            String message = (String) ois.readObject();
-            System.out.println("Message Received: " + message);
-            //create ObjectOutputStream object
-            oos = new ObjectOutputStream(socket.getOutputStream());
-            //write object to Socket
-            oos.writeObject("(" + g + "," + p + "," + A + ")");
-            //close resources
-            //ois.close();
-            //oos.close();
-            //socket.close();
-            //terminate the server if client sends exit request
-            if(message.equalsIgnoreCase("exit")) break;
+    public void listenForConnections() throws IOException{
+        
+        while (true) {
+
+            this.socket = server.accept(); 
+
         }
-        System.out.println("Shutting down Socket server!!");
-        //close the ServerSocket object
-        server.close();
     }
 
-    public void encrypt(String incomingMessage) throws IOException, ClassNotFoundException{
-
-        int a = (int) Math.round(Math.random()*p);
-        A = String.valueOf(publicValue(a));
-        this.output(A);
-        
-
-        int servPubVal = (int) ois.readObject();
-        secretKey = (int) computeKey(servPubVal,a);
-    }
-
-    public void output(String message) throws IOException{
-        oos.writeObject(message);
-    }
 }

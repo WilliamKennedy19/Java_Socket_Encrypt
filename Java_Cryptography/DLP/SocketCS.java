@@ -9,6 +9,6 @@ import java.net.UnknownHostException;
 
 public interface SocketCS {
 
-    public Socket socket;
+    
     
 }

@@ -14,8 +14,6 @@ public class Main {
     SocketClient client = new SocketClient(9876);
     client.connect();
 
-    
-    
     }
     
 }

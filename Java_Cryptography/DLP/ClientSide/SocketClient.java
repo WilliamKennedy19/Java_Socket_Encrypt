@@ -8,7 +8,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import DLP.EncryptSocket;
-import DLP.SocketCS;
 
 /**
  * This class implements java socket client
@@ -30,8 +29,6 @@ public class SocketClient extends EncryptSocket{
 
         super(port);
 
-        this.socket = new Socket(host.getHostName(), port);
-        this.oos = new ObjectOutputStream(socket.getOutputStream());
         this.connect();
 
     }

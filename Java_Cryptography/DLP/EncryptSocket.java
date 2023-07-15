@@ -12,7 +12,7 @@ public class EncryptSocket implements SocketCS{
 
     // Data communication properties
     InetAddress host = InetAddress.getLocalHost();
-    EncryptSocket socket = null;
+    Socket socket = null;
     ObjectOutputStream oos = null;
     ObjectInputStream ois = null;
     int port;
@@ -21,18 +21,24 @@ public class EncryptSocket implements SocketCS{
     int g, p, A;
     private int secretKey;
     
-    public EncryptSocket(int port) throws UnknownHostException{
+    public EncryptSocket(int port) throws UnknownHostException, IOException{
         this.port = port;
-        
+
+        try {
+            socket = new Socket(host.getHostName(), port);
+            this.oos = new ObjectOutputStream(socket.getOutputStream());
+        }
+
+        catch (UnknownHostException e) {
+            System.out.println("Unknown host");
+        }
+
+        catch (IOException e) {
+            System.out.println("IO Exception");
+        }
+
     }
 
-    // Assigns the public encryption variables to the socket instance
-    public void assignPubParam(int g, int p) {
-
-        this.g = g;
-        this.p = p;
-    }
-    
 
     // Writes messages to the server
     public void output(String message) throws IOException{
@@ -42,6 +48,13 @@ public class EncryptSocket implements SocketCS{
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Methods for DHKE
+
+    // Assigns the public encryption variables to the socket instance
+    public void assignPubParam(int g, int p) {
+
+        this.g = g;
+        this.p = p;
+    }
 
     public int publicValue(int a) throws ClassCastException{
         this.A = (int) Math.pow(g, a) % p;
