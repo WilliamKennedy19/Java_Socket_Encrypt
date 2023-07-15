@@ -28,6 +28,7 @@ public class SocketClient extends EncryptSocket{
     public SocketClient(int port) throws UnknownHostException, IOException, ClassNotFoundException, InterruptedException {
 
         super(port);
+        this.port = port;
 
         this.connect();
 
@@ -43,7 +44,7 @@ public class SocketClient extends EncryptSocket{
     public void activeConnection() throws IOException, ClassNotFoundException{
         
 
-        this.output("Hello, my namy is William");
+        this.output("Client Connect");
         String outgoing;
 
         this.ois = new ObjectInputStream(socket.getInputStream());
@@ -74,7 +75,7 @@ public class SocketClient extends EncryptSocket{
         p = Integer.parseInt(incomingMessage.substring(3, 5));
 
         // Asks the user for the secret key
-        int a = Integer.parseInt(System.console().readLine("Enter your secret value: "));
+        int a = (int) Math.floor(Math.random()*p);
 
         // Computers public value and sends it to the server
         String pubVal = String.valueOf(publicValue(a));

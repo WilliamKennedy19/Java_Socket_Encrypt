@@ -15,7 +15,7 @@ import DLP.EncryptSocket;
  * @author pankaj
  *
  */
-public class SocketServer extends EncryptSocket{
+public class EncryptServer extends EncryptSocket{
     
     //static ServerSocket variable
     private ServerSocket server;
@@ -23,30 +23,46 @@ public class SocketServer extends EncryptSocket{
     private int secretKey;
     public static int g = 2;
     public static int p = 13;
-    public static String A;
+    public static int A;
 
     public int port;
     public Socket socket;
     public static ObjectInputStream ois = null;
     public static ObjectOutputStream oos = null;
 
-    public SocketServer(int port) throws IOException, ClassNotFoundException{
+    public EncryptServer(int port) throws IOException, ClassNotFoundException{
 
         super(port);
 
         this.port = port;
 
         server = new ServerSocket(port);
-        this.socket = server.accept(); 
-        oos = new ObjectOutputStream(socket.getOutputStream());
+        this.assignPubParam(g,p);
+        int a = (int) Math.round(Math.random()*p);
+        A = this.publicValue(a);
+        this.listenForConnections();
     }
 
-    public void listenForConnections() throws IOException{
+    public static void main(String[] args) throws IOException, ClassNotFoundException{
+        EncryptServer server = new EncryptServer(9876);
+        
+    }
+
+    public void listenForConnections() throws IOException, ClassNotFoundException{
         
         while (true) {
 
             this.socket = server.accept(); 
 
+            output(Integer.toString(A));
+
+            ois = new ObjectInputStream(socket.getInputStream());
+
+            String m = (String) ois.readObject();
+
+            if (m == "Client Connect") {
+                oos.writeObject("(" + g + "," + p + ")");
+            }
         }
     }
 

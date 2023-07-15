@@ -15,7 +15,7 @@ public class EncryptSocket implements SocketCS{
     Socket socket = null;
     ObjectOutputStream oos = null;
     ObjectInputStream ois = null;
-    int port;
+    protected int port;
     
     // Encryption properties
     int g, p, A;
@@ -34,7 +34,7 @@ public class EncryptSocket implements SocketCS{
         }
 
         catch (IOException e) {
-            System.out.println("IO Exception");
+            System.out.println("Super class IO Exception");
         }
 
     }
@@ -62,7 +62,7 @@ public class EncryptSocket implements SocketCS{
     }
 
     // Computes the privately shared key between Alice and Bob
-    public int computeKey(double C, int c) throws ClassCastException{
+    public int computeServerKey(double C, int c) throws ClassCastException{
         
         return (int) Math.pow(C,c) % p;
     }
@@ -79,7 +79,7 @@ public class EncryptSocket implements SocketCS{
         
         // Receives the server public value and computes the secret key
         int servPubVal = (int) ois.readObject();
-        secretKey = (int) computeKey(servPubVal,a);
+        secretKey = (int) computeServerKey(servPubVal,a);
     }
 
 }
