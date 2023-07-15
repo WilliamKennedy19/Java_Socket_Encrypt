@@ -21,12 +21,17 @@ public class EncryptSocket implements SocketCS{
     int g, p, A;
     private int secretKey;
     
-    public EncryptSocket(int port, int g, int p) throws UnknownHostException{
+    public EncryptSocket(int port) throws UnknownHostException{
         this.port = port;
+        
+    }
+
+    // Assigns the public encryption variables to the socket instance
+    public void assignPubParam(int g, int p) {
+
         this.g = g;
         this.p = p;
     }
-
     
 
     // Writes messages to the server

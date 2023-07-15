@@ -28,7 +28,7 @@ public class SocketClient extends EncryptSocket{
 
     public SocketClient(int port) throws UnknownHostException, IOException, ClassNotFoundException, InterruptedException {
 
-        super(port, g, p);
+        super(port);
 
         this.socket = new Socket(host.getHostName(), port);
         this.oos = new ObjectOutputStream(socket.getOutputStream());

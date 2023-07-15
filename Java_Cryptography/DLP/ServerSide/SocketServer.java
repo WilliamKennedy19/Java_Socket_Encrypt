@@ -10,7 +10,6 @@ import java.net.Socket;
 
 import DLP.EncryptSocket;
 import DLP.SocketCS;
-import DLP.dlp;
 
 /**
  * This class implements java Socket server
@@ -34,7 +33,7 @@ public class SocketServer extends EncryptSocket{
     public static ObjectOutputStream oos = null;
 
     public SocketServer() throws IOException, ClassNotFoundException{
-        super(port,g, p);
+        super(port);
         
     }
     
