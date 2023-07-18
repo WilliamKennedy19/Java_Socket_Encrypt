@@ -61,6 +61,10 @@ public class EncryptClient extends EncryptSocket{
 
         while (true) {
             this.oos = new ObjectOutputStream(socket.getOutputStream());
+            this.ois = new ObjectInputStream(socket.getInputStream());
+
+            String message = System.console().readLine();
+            output(message);
         }
     }
 
