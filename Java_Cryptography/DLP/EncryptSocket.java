@@ -18,18 +18,36 @@ public class EncryptSocket implements SocketCS{
     protected int port;
     
     // Encryption properties
-    int g, p, A;
-    private int secretKey;
+    protected int g, p, A, B, secretKey;
     
     public EncryptSocket(int port) throws UnknownHostException, IOException{
         this.port = port;
 
-        socket = new Socket(host, port);
+        //socket = new Socket(host, port);
 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Methods for encrypted messaging
+    // Methods for Socket
+
+    // Writes messages to the server
+    public void output(String message) throws IOException{
+         oos.writeObject(message);
+     }
+
+     public void disconnect() throws IOException{
+        oos.writeObject("exit");
+    }
+
+    // Closes the input and output streams 
+    public void closeResources() throws IOException{
+        ois.close();
+        oos.close();
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Methods for message encryption
 
     public byte encryptMes(String m) {
         byte plainText = Byte.parseByte(m);
@@ -40,12 +58,6 @@ public class EncryptSocket implements SocketCS{
 
         return cipherText;
     }
-
-
-    // Writes messages to the server
-    public void output(String message) throws IOException{
-         oos.writeObject(message);
-     }
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +71,8 @@ public class EncryptSocket implements SocketCS{
     }
 
     public int publicValue(int a) throws ClassCastException{
-        this.A = (int) Math.pow(g, a) % p;
+
+        this.A = (int) (Math.pow(g, a)) % p;
         return  A;
     }
 
@@ -70,18 +83,20 @@ public class EncryptSocket implements SocketCS{
     }
 
     // Computes values for DHKE protocol
-    public void computeKey(String incomingMessage) throws IOException, ClassNotFoundException{
+    public String computeKey(String incomingMessage) throws IOException, ClassNotFoundException{
 
         // Generates a random secret key for the Socket
         int a = (int) Math.round(Math.random()*p);
 
-        // Computes public value
-        String pubVal = String.valueOf(publicValue(a));
-        this.output(pubVal);
+        this.B = incomingMessage.charAt(1);
+        assignPubParam((int) incomingMessage.charAt(4), (int) incomingMessage.charAt(6));
+
+        this.secretKey = computeServerKey(B, a);
         
-        // Receives the server public value and computes the secret key
-        int servPubVal = (int) ois.readObject();
-        secretKey = (int) computeServerKey(servPubVal,a);
+        return Integer.toString(publicValue(a));
+
     }
+
+    
 
 }

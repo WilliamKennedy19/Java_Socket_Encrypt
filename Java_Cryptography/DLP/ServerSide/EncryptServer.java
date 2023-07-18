@@ -20,7 +20,7 @@ public class EncryptServer extends EncryptSocket{
     
     //static ServerSocket variable
     private ServerSocket server;
-    private static int port;
+    protected int port;
     public Socket socket;
     public ObjectInputStream ois = null;
     public ObjectOutputStream oos = null;
@@ -36,7 +36,8 @@ public class EncryptServer extends EncryptSocket{
         super(port);
 
         this.port = port;
-        
+
+        // Sets up ServerSocket
         try {
             server = new ServerSocket(port);
         }
@@ -49,38 +50,47 @@ public class EncryptServer extends EncryptSocket{
             System.out.println("Super class IO Exception");
         }
 
-        socket = server.accept();
-
+        // Computes public key for DHKE
         this.assignPubParam(g,p);
         int a = (int) Math.round(Math.random()*p);
         A = this.publicValue(a);
-        this.oos = new ObjectOutputStream(socket.getOutputStream());
+
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException{
-        EncryptServer eServer = new EncryptServer(port);
+        EncryptServer eServer = new EncryptServer(9876);
+
 
         eServer.listenForConnections();
     }
 
+
+    // Listens for clients trying to connect to the server
     public void listenForConnections() throws IOException, ClassNotFoundException{
 
-        this.oos = new ObjectOutputStream(socket.getOutputStream());
+        System.out.println("The server is waiting for connection");
+
         
         while (true) {
 
             this.socket = server.accept(); 
+            this.oos = new ObjectOutputStream(socket.getOutputStream());
 
-            output(Integer.toString(A));
+            output("("+A+","+g+","+p+")");
 
             ois = new ObjectInputStream(socket.getInputStream());
 
             String m = (String) ois.readObject();
 
-            if (m == "Client Connect") {
-                oos.writeObject("(" + g + "," + p + ")");
-            }
+            //this.secretKey = computeServerKey(Double.parseDouble(m), (int) Math.floor(Math.random()*p));
+
+            System.out.println(m);
+
         }
+    }
+
+    public void output(String message) throws IOException{
+        oos.writeObject(message);
     }
 
 }
